@@ -110,7 +110,7 @@ Errors:
 Response 200:
 {
   "itemId": 101,
-  "status": "ACTIVE|ENDED",
+  "status": "ACTIVE|ENDED|REMOVED_NO_BIDS",
   "currentBid": 121,
   "highestBidder": "alice",
   "endsAt": "..."
