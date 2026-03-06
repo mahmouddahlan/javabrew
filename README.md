@@ -15,9 +15,10 @@ Maven 3.8+
 git clone https://github.com/mahmouddahlan/javabrew
 3) Start the server
 From repo root:
+
 ./mvnw spring-boot:run
-Server runs on:
-http://localhost:8080
+
+Server runs on: http://localhost:8080
 
 Health check:
 curl http://localhost:8080/api/health
