@@ -46,7 +46,7 @@ Ensure:
 baseUrl \= http://localhost:8080/api  
 ---
 
-# **6\. Happy Path (End-to-End Flow)**
+#Happy Path (End-to-End Flow)**
 Run the following requests in order:
 
 1. 01 \- Health
@@ -87,7 +87,7 @@ All requests in the Happy Path return **200 or 201** depending on endpoint.
 
 ---
 
-# **7\. Negative Tests (Robustness)**
+#Negative Tests (Robustness)**
 
 The following scenarios are implemented:
 
