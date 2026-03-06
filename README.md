@@ -1,6 +1,6 @@
 # EECS 4413 Auction System
 ## Overview
-JavaBrew is a forward-auction e-commerce backend for EECS 4413. It supports user registration/login, item listing and search, placing strictly-increasing integer bids, auction state tracking (active vs ended/removed), winner-only payment, and receipt/shipping info.Deliverable 2 focuses on REST backend implementation and API testing scripts (Postman/curl). UI + async notifications are not required in this milestone.
+JavaBrew is a forward-auction e-commerce backend project for EECS 4413. It supports user registration/login, item listing and search, placing strictly-increasing integer bids, auction state tracking (active vs ended/removed), winner-only payment, and receipt/shipping info.Deliverable 2 focuses on REST backend implementation and API testing scripts (Postman/curl). UI + async notifications are not required in this milestone.
 ## Tech Stack
 Language: Java 17
 Framework: Spring Boot (REST)
