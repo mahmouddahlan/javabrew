@@ -196,8 +196,8 @@ The following deliverables are included in this repository:
 
 - Postman collections and environment files for API testing (`docs/deliverable-2/Postman Collections/`)
 - API contract documentation (`docs/deliverable-2/api-contracts.md`)
-- Appended design document and design addendum (`docs/deliverable-2/design-addendum.md`)
+- Appended design document and design addendum (`docs/deliverable-2/Document_2_Team_1_JavaBrew-Software_Design.pdf`)
 - Updated UML diagrams (architecture, sequence, activity)(`docs/deliverable-2/Diagrams/`)
 - Backend implementation of the REST API
 - Automated unit tests located in `src/test`
-- Instructions for running the system and tests in this README
+- Instructions for running the system, tests, and API flow in this README
