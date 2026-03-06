@@ -219,4 +219,62 @@ Each negative test includes assertions validating the expected status code.
  ***`400 Bad Request`***
 ---
 ## Testing
+
+All tests are located in `src/test/java`. The project uses JUnit 5, Mockito, and Spring Boot Test.
+
+### Run All Tests
+
+From the root of the project run:
+
+`mvn test`
+
+or using the IntelliJ GUI `Maven > javabrew > Lifecycle > test`
+
+Maven will:
+- Compile the project 
+- Run all unit tests 
+- Print the results
+
+Example output:
+```
+Tests run: 30, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
+
+### Running a Specific Test
+
+You can run a single test class as an example with:
+
+`mvn -Dtest=AuthServiceTest test`
+
+### Test Coverage
+
+The test suite verifies the core system logic:
+
+#### Authentication
+
+- Signup success
+
+- Duplicate username rejection
+
+- Login success
+
+- Invalid credentials handling
+
+#### Auction
+
+- Successful bidding
+
+- Bid must be strictly increasing
+
+- Auction expiration behavior
+
+- Invalid bids rejected
+
+#### Payment
+
+- Only the winning bidder can pay
+- Shipping cost calculation
+- Receipt generation
+
 ## Deliverable 2 Notes
