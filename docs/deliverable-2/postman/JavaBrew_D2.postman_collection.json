@@ -1,0 +1,970 @@
+{
+  "info": {
+    "_postman_id": "83f8521f-f6e3-4e24-9959-5dce69727710",
+    "name": "JavaBrew - D2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52084947",
+    "_collection_link": "https://go.postman.co/collection/52084947-83f8521f-f6e3-4e24-9959-5dce69727710?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Happy Path",
+      "item": [
+        {
+          "name": "01-health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Health OK\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "02-Signup",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"alice1\",\r\n  \"password\": \"Passw0rd!\",\r\n  \"firstName\": \"Alice\",\r\n  \"lastName\": \"Smith\",\r\n  \"shippingAddress\": {\r\n    \"streetName\": \"Main St\",\r\n    \"streetNumber\": \"123\",\r\n    \"city\": \"Toronto\",\r\n    \"country\": \"Canada\",\r\n    \"postalCode\": \"M1M1M1\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "03 - Login request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login success\", () => {\r",
+                  "  pm.expect(200).to.eql(pm.response.code);\r",
+                  "});\r",
+                  "\r",
+                  "const json = pm.response.json();\r",
+                  "pm.environment.set(\"token\", json.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{vault:authorization-password}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "alice",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "04 - Create Item (UC7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Item created\", () => pm.expect(201).to.eql(pm.response.code));\r",
+                  "const json = pm.response.json();\r",
+                  "pm.environment.set(\"itemId\", json.itemId);\r",
+                  "pm.environment.set(\"currentBid\", 100);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Nintendo Switch\",\r\n  \"description\": \"Like new\",\r\n  \"keywords\": [\"console\", \"gaming\", \"switch\"],\r\n  \"auctionType\": \"FORWARD\",\r\n  \"startingBid\": 100,\r\n  \"durationSeconds\": 10,\r\n  \"shippingCost\": 15,\r\n  \"expeditedShippingCost\": 10,\r\n  \"shippingDays\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "05 - Search Items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Search OK\", () => pm.expect(200).to.eql(pm.response.code));\r",
+                  "const items = pm.response.json();\r",
+                  "pm.test(\"Returns array\", () => pm.expect(items).to.be.an(\"array\"));\r",
+                  "\r",
+                  "const itemId = Number(pm.environment.get(\"itemId\"));\r",
+                  "const hit = items.find(x => Number(x.itemId) === itemId);\r",
+                  "if (hit) pm.environment.set(\"currentBid\", hit.currentBid);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/items?keyword=switch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "items"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "switch"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "06 - Place Bid",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const cur = parseInt(pm.environment.get(\"currentBid\") || \"100\", 10);\r",
+                  "pm.variables.set(\"nextBid\", cur + 1);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Bid accepted\", () => pm.expect(200).to.eql(pm.response.code));\r",
+                  "const json = pm.response.json();\r",
+                  "pm.environment.set(\"currentBid\", json.currentBid);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"bidAmount\": {{nextBid}} }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{itemId}}/bids",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auctions",
+                "{{itemId}}",
+                "bids"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "07 - Get Auction State (end)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Auction state OK\", () => pm.expect(200).to.eql(pm.response.code));\r",
+                  "\r",
+                  "const s = pm.response.json();\r",
+                  "pm.environment.set(\"auctionStatus\", s.status);\r",
+                  "pm.environment.set(\"highestBidder\", s.highestBidder || \"\");\r",
+                  "pm.environment.set(\"currentBid\", s.currentBid);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auctions",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "08 - Pay as Winner",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Payment OK\", () => pm.expect(200).to.eql(pm.response.code));\r",
+                  "const json = pm.response.json();\r",
+                  "pm.environment.set(\"receiptId\", json.receiptId);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"expeditedShipping\": true,\r\n  \"cardNumber\": \"4111111111111111\",\r\n  \"nameOnCard\": \"Alice Smith\",\r\n  \"expiration\": \"12/28\",\r\n  \"securityCode\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "09 - Get Receipt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Receipt OK\", () => pm.expect(200).to.eql(pm.response.code));\r",
+                  "const r = pm.response.json();\r",
+                  "pm.test(\"Has shipping info message\", () => pm.expect(r.shippingInfo).to.be.a(\"string\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/receipts/{{receiptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "receipts",
+                "{{receiptId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Path",
+      "item": [
+        {
+          "name": "NEG 01 - Duplicate Username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Duplicate username rejected (409)\", () => {\r",
+                  "  pm.expect(409).to.eql(pm.response.code);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"firstName\": \"Alice\",\r\n  \"lastName\": \"Smith\",\r\n  \"shippingAddress\": {\r\n    \"streetName\": \"Main St\",\r\n    \"streetNumber\": \"123\",\r\n    \"city\": \"Toronto\",\r\n    \"country\": \"Canada\",\r\n    \"postalCode\": \"M1M1M1\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NEG 02 - Bad Login Credentials",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NEG 03 - Bid <= Current Bid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Bid <= current rejected (400)\", () => {\r",
+                  "  pm.expect(400).to.eql(pm.response.code);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"bidAmount\": {{currentBid}} }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{itemId}}/bids",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auctions",
+                "{{itemId}}",
+                "bids"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SETUP 02 - Place Valid Bid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Bid accepted\", () => pm.expect(200).to.eql(pm.response.code));\r",
+                  "pm.environment.set(\"currentBid\", pm.response.json().currentBid);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"bidAmount\": 101 }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{itemId}}/bids",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auctions",
+                "{{itemId}}",
+                "bids"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SETUP 01 - Create Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Item created\", () => pm.expect(201).to.eql(pm.response.code));\r",
+                  "const json = pm.response.json();\r",
+                  "pm.environment.set(\"itemId\", json.itemId);\r",
+                  "pm.environment.set(\"currentBid\", 100);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"NEG Active Item\",\r\n  \"description\": \"For NEG bid<=current test\",\r\n  \"keywords\": [\"neg\", \"active\"],\r\n  \"auctionType\": \"FORWARD\",\r\n  \"startingBid\": 100,\r\n  \"durationSeconds\": 120,\r\n  \"shippingCost\": 15,\r\n  \"expeditedShippingCost\": 10,\r\n  \"shippingDays\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NEG 04 -Bid After Auction Ended",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Bid after end rejected (409)\", () => {\r",
+                  "  pm.expect(409).to.eql(pm.response.code);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const cur = parseInt(pm.environment.get(\"currentBid\") || \"0\", 10);\r",
+                  "pm.variables.set(\"lateBid\", cur + 50);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"bidAmount\": {{lateBid}} }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{itemId}}/bids",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auctions",
+                "{{itemId}}",
+                "bids"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NEG 05 – Non-winner pays",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Bob login success\", () => {\r",
+                  "  pm.expect(200).to.eql(pm.response.code);\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.set(\"token2\", pm.response.json().token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"{{username2}}\",\r\n  \"password\": \"{{password2}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NEG 05a – Signup Bob",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"{{username2}}\",\r\n  \"password\": \"{{password2}}\",\r\n  \"firstName\": \"Bob\",\r\n  \"lastName\": \"Test\",\r\n  \"shippingAddress\": {\r\n    \"streetName\": \"Side St\",\r\n    \"streetNumber\": \"9\",\r\n    \"city\": \"Toronto\",\r\n    \"country\": \"Canada\",\r\n    \"postalCode\": \"M2M2M2\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NEG 05b - Login Bob",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token2\", pm.response.json().token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"{{username2}}\",\r\n  \"password\": \"{{password2}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NEG 06 - Missing Payment Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Missing payment fields rejected (400)\", () => {\r",
+                  "  pm.expect(400).to.eql(pm.response.code);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"expeditedShipping\": true,\r\n  \"nameOnCard\": \"Alice Smith\",\r\n  \"expiration\": \"12/28\",\r\n  \"securityCode\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SETUP 03 - Create Item (Ends in 5s)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Item created\", () => pm.expect(201).to.eql(pm.response.code));\r",
+                  "const json = pm.response.json();\r",
+                  "pm.environment.set(\"itemId\", json.itemId);\r",
+                  "pm.environment.set(\"currentBid\", 100);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Nintendo Switch\",\r\n  \"description\": \"Like new\",\r\n  \"keywords\": [\"console\", \"gaming\", \"switch\"],\r\n  \"auctionType\": \"FORWARD\",\r\n  \"startingBid\": 100,\r\n  \"durationSeconds\": 120,\r\n  \"shippingCost\": 15,\r\n  \"expeditedShippingCost\": 10,\r\n  \"shippingDays\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SETUP 05-1: Create item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"itemId\", pm.response.json().itemId);\r",
+                  "pm.environment.set(\"currentBid\", 100);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"NEG NonWinner Item\",\r\n  \"description\": \"For NEG 05\",\r\n  \"keywords\": [\"neg\", \"pay\"],\r\n  \"auctionType\": \"FORWARD\",\r\n  \"startingBid\": 100,\r\n  \"durationSeconds\": 10,\r\n  \"shippingCost\": 15,\r\n  \"expeditedShippingCost\": 10,\r\n  \"shippingDays\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SETUP 05-2: Place bid as Alice",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"bidAmount\": 101 }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{itemId}}/bids",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auctions",
+                "{{itemId}}",
+                "bids"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "end",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auctions",
+                "{{itemId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
