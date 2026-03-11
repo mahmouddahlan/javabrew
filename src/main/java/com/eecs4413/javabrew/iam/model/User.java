@@ -21,6 +21,10 @@ public class User {
     @Embedded
     private Address shippingAddress;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;  
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getPasswordHash() { return passwordHash; }
@@ -33,4 +37,7 @@ public class User {
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
     public void setShippingAddress(Address shippingAddress) { this.shippingAddress = shippingAddress; }
+    
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }

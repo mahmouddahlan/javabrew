@@ -87,4 +87,17 @@ public class AuctionService {
 
         return getAuctionState(itemId);
     }
+    @Transactional
+    public AuctionStateResponse forceEndAuction(Long itemId) {
+    Item item = items.findById(itemId).orElseThrow(() -> ApiException.notFound("Item not found"));
+
+    if (!item.isHasAnyBid()) {
+        item.setStatus(AuctionStatus.REMOVED_NO_BIDS);
+    } else {
+        item.setStatus(AuctionStatus.ENDED);
+    }
+    items.save(item);
+
+    return getAuctionState(itemId);
+}
 }

@@ -10,6 +10,9 @@ import com.eecs4413.javabrew.iam.model.User;
 import com.eecs4413.javabrew.iam.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.eecs4413.javabrew.iam.dto.CurrentUserResponse;
+import com.eecs4413.javabrew.iam.model.Role;
+import com.eecs4413.javabrew.iam.model.User;
 
 @Service
 public class AuthService {
@@ -28,6 +31,8 @@ public class AuthService {
         }
 
         User u = new User();
+        // By default, all new users get the USER role. Admins must be created manually in the database.
+        u.setRole(Role.USER);
         u.setUsername(req.username);
         u.setPasswordHash(encoder.encode(req.password));
         u.setFirstName(req.firstName);
@@ -55,6 +60,18 @@ public class AuthService {
         }
 
         String token = tokenStore.issueToken(u.getUsername());
-        return new LoginResponse(token, u.getUsername());
+        return new LoginResponse(token, u.getUsername(), u.getRole().name());
+    }
+    public CurrentUserResponse me(String username) {
+        User u = users.findByUsername(username)
+                .orElseThrow(() -> ApiException.unauthorized("User not found"));
+    
+        return new CurrentUserResponse(
+                u.getId(),
+                u.getUsername(),
+                u.getFirstName(),
+                u.getLastName(),
+                u.getRole().name()
+        );
     }
 }

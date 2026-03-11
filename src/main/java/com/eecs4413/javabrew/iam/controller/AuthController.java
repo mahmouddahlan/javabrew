@@ -9,13 +9,22 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.eecs4413.javabrew.iam.dto.CurrentUserResponse;
+import com.eecs4413.javabrew.iam.service.CurrentUser;
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final CurrentUser currentUser;
+
     private final AuthService auth;
 
-    public AuthController(AuthService auth) { this.auth = auth; }
+    public AuthController(AuthService auth, CurrentUser currentUser) { 
+        this.auth = auth; 
+        this.currentUser = currentUser;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest req) {
@@ -26,4 +35,9 @@ public class AuthController {
     public LoginResponse login(@Valid @RequestBody LoginRequest req) {
         return auth.login(req);
     }
+    @GetMapping("/me")
+    public CurrentUserResponse me(HttpServletRequest httpReq) {
+    String username = currentUser.requireUsername(httpReq);
+    return auth.me(username);
+}
 }
