@@ -22,7 +22,32 @@ Server runs on: http://localhost:8080
 
 Health check:
 curl http://localhost:8080/api/health
-# **Running Postman Collection**
+## Docker Deployment
+### Prerequisites
+- Docker Desktop installed and running
+### Run with Docker Compose (recommended)
+docker-compose up --build
+
+- Backend: http://localhost:8080
+- Frontend: http://localhost:5173
+
+### Run backend only
+docker build -t javabrew-backend .
+docker run -p 8080:8080 javabrew-backend
+
+### Run frontend only
+cd frontend
+docker build -t javabrew-frontend .
+docker run -p 5173:5173 javabrew-frontend
+
+### Stop containers
+docker-compose down
+
+### Notes
+- H2 in-memory database resets on every restart — re-run Postman happy path to seed data
+- Admin credentials are seeded automatically on startup (see AdminSeeder.java)
+
+## Running Postman Collection
 ## **Step 1 – Import Collection**
 1. Open Postman
 2. Click **Import**

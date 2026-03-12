@@ -15,12 +15,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/api/**")
-                .excludePathPatterns(
-                        "/api/health",
-                        "/api/auth/**",
-                        "/h2-console/**"
-                );
+            .addPathPatterns("/api/**")
+            .excludePathPatterns(
+                "/api/health",
+                "/api/auth/login",
+                "/api/auth/signup",
+                "/api/items",          // public: browse catalogue
+                "/api/items/{itemId}", // public: view item detail
+                "/h2-console/**"
+            );
     }
 
     @Override
@@ -29,4 +32,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedHeaders("*");
     }
+    
 }

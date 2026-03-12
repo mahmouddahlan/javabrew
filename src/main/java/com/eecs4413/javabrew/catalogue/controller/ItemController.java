@@ -2,6 +2,7 @@ package com.eecs4413.javabrew.catalogue.controller;
 
 import com.eecs4413.javabrew.catalogue.dto.*;
 import com.eecs4413.javabrew.catalogue.service.CatalogueService;
+import com.eecs4413.javabrew.common.exception.ApiException;
 import com.eecs4413.javabrew.iam.service.CurrentUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -39,4 +40,11 @@ public class ItemController {
     public ItemDetailResponse get(@PathVariable Long itemId) {
         return catalogue.getItem(itemId);
     }
+    
+    @GetMapping("/won")
+    public List<ItemSummaryResponse> wonItems(HttpServletRequest httpReq) {
+    String username = currentUser.requireUsername(httpReq);
+    if (username == null) throw ApiException.unauthorized("Login required");
+    return catalogue.getWonItems(username);
+}
 }

@@ -96,4 +96,24 @@ public class CatalogueService {
         r.shippingDays = item.getShippingDays();
         return r;
     }
+
+    public List<ItemSummaryResponse> getWonItems(String username) {
+        // First refresh all ENDED items to make sure statuses are current
+        List<Item> ended = items.findByStatus(AuctionStatus.ENDED);
+        for (Item i : ended) auctionService.refreshStatus(i);
+    
+        // Return ENDED items where this user is the highest bidder
+        // and no payment has been made yet
+        return items.findByStatus(AuctionStatus.ENDED).stream()
+                .filter(i -> username.equals(i.getHighestBidder()))
+                .map(i -> new ItemSummaryResponse(
+                        i.getId(),
+                        i.getName(),
+                        i.getCurrentBid(),
+                        i.getAuctionType().name(),
+                        i.getEndsAt()
+                ))
+                .collect(Collectors.toList());
+    }
+    
 }

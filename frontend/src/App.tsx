@@ -1,35 +1,80 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Navigate, Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import CataloguePage from "./pages/CataloguePage";
+import ItemPage from "./pages/ItemPage";
+import CreateItemPage from "./pages/CreateItemPage";
+import PaymentPage from "./pages/PaymentPage";
+import ReceiptPage from "./pages/ReceiptPage";
+import AdminPage from "./pages/AdminPage";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      <Navbar />
+      <div className="container">
+        <Routes>
+          <Route path="/" element={<Navigate to="/catalogue" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
 
-export default App
+          <Route
+            path="/catalogue"
+            element={
+              <ProtectedRoute>
+                <CataloguePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/items/:itemId"
+            element={
+              <ProtectedRoute>
+                <ItemPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/create-item"
+            element={
+              <ProtectedRoute>
+                <CreateItemPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/payments/:itemId"
+            element={
+              <ProtectedRoute>
+                <PaymentPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/receipts/:receiptId"
+            element={
+              <ProtectedRoute>
+                <ReceiptPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </>
+  );
+}

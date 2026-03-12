@@ -24,14 +24,14 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) {
         String header = req.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
-            throw ApiException.unauthorized("Missing or invalid Authorization header");
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring("Bearer ".length()).trim();
+            String username = tokenStore.getUsername(token);
+            if (username != null) {
+                req.setAttribute(CurrentUser.ATTR_USERNAME, username);
+            }
         }
-        String token = header.substring("Bearer ".length()).trim();
-        String username = tokenStore.getUsername(token);
-        if (username == null) throw ApiException.unauthorized("Invalid token");
-
-        req.setAttribute(CurrentUser.ATTR_USERNAME, username);
+        // Don't throw here — let each controller decide if auth is required
         return true;
     }
 }
