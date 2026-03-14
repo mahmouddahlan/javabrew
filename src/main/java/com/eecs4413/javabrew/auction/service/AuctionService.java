@@ -24,9 +24,6 @@ public class AuctionService {
         this.bids = bids;
     }
 
-    /**
-     * Refresh status based on time. If ended and no bids happened, mark removed.
-     */
     public void refreshStatus(Item item) {
         if (item.getStatus() != AuctionStatus.ACTIVE) return;
 
@@ -54,10 +51,6 @@ public class AuctionService {
         return r;
     }
 
-    /**
-     * Core UC3: bid must be strictly increasing integer.
-     * Transactional so two near-simultaneous bids can't both win.
-     */
     @Transactional
     public AuctionStateResponse placeBid(Long itemId, String bidderUsername, BidRequest req) {
         Item item = items.findById(itemId).orElseThrow(() -> ApiException.notFound("Item not found"));
@@ -72,14 +65,12 @@ public class AuctionService {
             throw ApiException.badRequest("Bid must be strictly greater than current bid");
         }
 
-        // Save bid history
         Bid b = new Bid();
         b.setItem(item);
         b.setBidderUsername(bidderUsername);
         b.setAmount(newBid);
         bids.save(b);
 
-        // Update current highest
         item.setCurrentBid(newBid);
         item.setHighestBidder(bidderUsername);
         item.setHasAnyBid(true);
@@ -87,17 +78,16 @@ public class AuctionService {
 
         return getAuctionState(itemId);
     }
+
     @Transactional
-    public AuctionStateResponse forceEndAuction(Long itemId) {
-    Item item = items.findById(itemId).orElseThrow(() -> ApiException.notFound("Item not found"));
+    public void forceEndAuction(Long itemId) {
+        Item item = items.findById(itemId).orElseThrow(() -> ApiException.notFound("Item not found"));
 
-    if (!item.isHasAnyBid()) {
-        item.setStatus(AuctionStatus.REMOVED_NO_BIDS);
-    } else {
-        item.setStatus(AuctionStatus.ENDED);
+        if (!item.isHasAnyBid()) {
+            item.setStatus(AuctionStatus.REMOVED_NO_BIDS);
+        } else {
+            item.setStatus(AuctionStatus.ENDED);
+        }
+        items.save(item);
     }
-    items.save(item);
-
-    return getAuctionState(itemId);
-}
 }

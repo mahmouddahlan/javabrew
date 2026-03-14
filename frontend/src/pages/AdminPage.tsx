@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
-import type { AdminStatsResponse, ItemDetail } from "../types/api";
+import type { AdminStatsResponse } from "../types/api";
 
-type AdminItem = ItemDetail & {
-  sellerUsername?: string;
+type AdminItem = {
+  id: number;
+  name: string;
+  status: string;
+  currentBid: number;
 };
 
 export default function AdminPage() {
@@ -22,7 +25,7 @@ export default function AdminPage() {
       setItems(itemsRes.data);
       setError("");
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to load admin dashboard");
+      setError(err?.response?.data?.message ?? err?.message ?? "Unexpected error");
     }
   }
 
@@ -30,9 +33,10 @@ export default function AdminPage() {
     try {
       await api.delete(`/admin/items/${itemId}`);
       setSuccess(`Deleted item ${itemId}`);
+      setError("");
       await load();
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Delete failed");
+      setError(err?.response?.data?.message ?? err?.message ?? "Delete failed");
     }
   }
 
@@ -40,9 +44,10 @@ export default function AdminPage() {
     try {
       await api.post(`/admin/auctions/${itemId}/end`);
       setSuccess(`Force-ended auction ${itemId}`);
+      setError("");
       await load();
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Force end failed");
+      setError(err?.response?.data?.message ?? err?.message ?? "Force end failed");
     }
   }
 
@@ -70,15 +75,17 @@ export default function AdminPage() {
       <div className="card">
         <h3>All Auction Items</h3>
         {items.map((item) => (
-          <div key={item.itemId} className="card">
+          <div key={item.id} className="card">
             <p><strong>{item.name}</strong></p>
             <p>Status: {item.status}</p>
             <p>Current Bid: ${item.currentBid}</p>
             <div className="row">
-              <button className="secondary" onClick={() => forceEnd(item.itemId)}>
-                Force End
-              </button>
-              <button className="danger" onClick={() => deleteItem(item.itemId)}>
+              {item.status === "ACTIVE" && (
+                <button className="secondary" onClick={() => forceEnd(item.id)}>
+                  Force End
+                </button>
+              )}
+              <button className="danger" onClick={() => deleteItem(item.id)}>
                 Delete Item
               </button>
             </div>

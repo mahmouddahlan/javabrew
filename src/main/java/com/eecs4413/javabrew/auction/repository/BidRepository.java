@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findByItemOrderByCreatedAtDesc(Item item);
+    void deleteByItemId(Long itemId);
 }

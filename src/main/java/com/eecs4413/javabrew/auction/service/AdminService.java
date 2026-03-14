@@ -1,6 +1,7 @@
 package com.eecs4413.javabrew.auction.service;
 
 import com.eecs4413.javabrew.auction.dto.AdminStatsResponse;
+import com.eecs4413.javabrew.auction.repository.BidRepository;
 import com.eecs4413.javabrew.catalogue.model.AuctionStatus;
 import com.eecs4413.javabrew.catalogue.model.Item;
 import com.eecs4413.javabrew.catalogue.repository.ItemRepository;
@@ -9,6 +10,7 @@ import com.eecs4413.javabrew.iam.model.Role;
 import com.eecs4413.javabrew.iam.model.User;
 import com.eecs4413.javabrew.iam.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,11 +20,13 @@ public class AdminService {
     private final UserRepository users;
     private final ItemRepository items;
     private final AuctionService auctionService;
+    private final BidRepository bids;
 
-    public AdminService(UserRepository users, ItemRepository items, AuctionService auctionService) {
+    public AdminService(UserRepository users, ItemRepository items, AuctionService auctionService, BidRepository bids) {
         this.users = users;
         this.items = items;
         this.auctionService = auctionService;
+        this.bids = bids;
     }
 
     private void requireAdmin(String username) {
@@ -39,9 +43,11 @@ public class AdminService {
         return items.findAll();
     }
 
+    @Transactional
     public void deleteItem(String username, Long itemId) {
         requireAdmin(username);
         Item item = items.findById(itemId).orElseThrow(() -> ApiException.notFound("Item not found"));
+        bids.deleteByItemId(itemId);
         items.delete(item);
     }
 
