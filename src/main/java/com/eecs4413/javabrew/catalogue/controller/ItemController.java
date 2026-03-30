@@ -23,12 +23,15 @@ public class ItemController {
     }
 
     // UC7: seller uploads item
-    @PostMapping
-    public CreateItemResponse create(@Valid @RequestBody CreateItemRequest req, HttpServletRequest httpReq) {
-        String username = currentUser.requireUsername(httpReq);
-        return catalogue.createItem(req, username);
-    }
+   @PostMapping
+@ResponseStatus(HttpStatus.CREATED)
+public CreateItemResponse create(
+        @Valid @RequestBody CreateItemRequest req,
+        HttpServletRequest httpReq) {
 
+    String username = currentUser.requireUsername(httpReq);
+    return catalogue.createItem(req, username);
+}
     // UC2.1: search
     @GetMapping
     public List<ItemSummaryResponse> search(@RequestParam(required = false) String keyword) {
