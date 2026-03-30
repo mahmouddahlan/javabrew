@@ -23,7 +23,6 @@ public class ItemController {
 
     // UC7: seller uploads item
   @PostMapping
-@ResponseStatus(code = org.springframework.http.HttpStatus.CREATED)
 public CreateItemResponse create(
         @Valid @RequestBody CreateItemRequest req,
         HttpServletRequest httpReq) {
