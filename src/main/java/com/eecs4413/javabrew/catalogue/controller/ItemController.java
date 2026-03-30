@@ -23,10 +23,7 @@ public class ItemController {
 
     // UC7: seller uploads item
   @PostMapping
-public CreateItemResponse create(
-        @Valid @RequestBody CreateItemRequest req,
-        HttpServletRequest httpReq) {
-
+public CreateItemResponse create(@Valid @RequestBody CreateItemRequest req, HttpServletRequest httpReq) {
     String username = currentUser.requireUsername(httpReq);
     return catalogue.createItem(req, username);
 }
