@@ -24,8 +24,8 @@ public class ItemController {
 
     // UC7: seller uploads item
    @PostMapping
-@ResponseStatus(HttpStatus.CREATED)
-public CreateItemResponse create(
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public CreateItemResponse create(
         @Valid @RequestBody CreateItemRequest req,
         HttpServletRequest httpReq) {
 
