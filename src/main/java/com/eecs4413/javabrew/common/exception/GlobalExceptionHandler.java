@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,7 +34,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400)
                 .body(new ApiError(400, "Bad Request", msg, req.getRequestURI()));
     }
+@ExceptionHandler(ResponseStatusException.class)
+public ResponseEntity<ApiError> handleResponseStatus(ResponseStatusException ex,
+                                                     HttpServletRequest req) {
+    int status = ex.getStatusCode().value();
 
+    String errorLabel = switch (status) {
+        case 400 -> "Bad Request";
+        case 401 -> "Unauthorized";
+        case 403 -> "Forbidden";
+        case 404 -> "Not Found";
+        case 409 -> "Conflict";
+        default -> "Error";
+    };
+
+    return ResponseEntity.status(status)
+            .body(new ApiError(status, errorLabel, ex.getReason(), req.getRequestURI()));
+}
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleOther(Exception ex, HttpServletRequest req) {
         return ResponseEntity.status(500)
