@@ -1,13 +1,13 @@
 package com.eecs4413.javabrew.catalogue.controller;
 
-import com.eecs4413.javabrew.catalogue.dto.;
+import com.eecs4413.javabrew.catalogue.dto.*;
 import com.eecs4413.javabrew.catalogue.service.CatalogueService;
 import com.eecs4413.javabrew.common.exception.ApiException;
 import com.eecs4413.javabrew.iam.service.CurrentUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
