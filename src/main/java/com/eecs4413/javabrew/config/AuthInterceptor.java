@@ -27,9 +27,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring("Bearer ".length()).trim();
             String username = tokenStore.getUsername(token);
-            if (username != null) {
-                req.setAttribute(CurrentUser.ATTR_USERNAME, username);
-            }
+           if (username == null) {
+    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+}
         }
         // Don't throw here — let each controller decide if auth is required
         return true;
