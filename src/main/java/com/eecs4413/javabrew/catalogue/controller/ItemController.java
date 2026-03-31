@@ -1,12 +1,13 @@
 package com.eecs4413.javabrew.catalogue.controller;
 
-import com.eecs4413.javabrew.catalogue.dto.*;
+import com.eecs4413.javabrew.catalogue.dto.;
 import com.eecs4413.javabrew.catalogue.service.CatalogueService;
 import com.eecs4413.javabrew.common.exception.ApiException;
 import com.eecs4413.javabrew.iam.service.CurrentUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.;
 
 import java.util.List;
 
@@ -22,29 +23,30 @@ public class ItemController {
         this.currentUser = currentUser;
     }
 
-    // UC7: seller uploads item
-  @PostMapping
-public CreateItemResponse create(@Valid @RequestBody CreateItemRequest req, HttpServletRequest httpReq) {
-    String username = currentUser.requireUsername(httpReq);
-    return catalogue.createItem(req, username);
-}
-    // UC2.1: search
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreateItemResponse create(@Valid @RequestBody CreateItemRequest req, HttpServletRequest httpReq) {
+        String username = currentUser.requireUsername(httpReq);
+        return catalogue.createItem(req, username);
+    }
+
     @GetMapping
     public List<ItemSummaryResponse> search(@RequestParam(required = false) String keyword) {
         return catalogue.search(keyword);
     }
 
-    // UC2.2/UC2.3: view item details (then bid)
     @GetMapping("/{itemId}")
     public ItemDetailResponse get(@PathVariable Long itemId) {
         return catalogue.getItem(itemId);
     }
-    
+
     @GetMapping("/won")
     public List<ItemSummaryResponse> wonItems(HttpServletRequest httpReq) {
-    String username = currentUser.requireUsername(httpReq);
-    if (username == null) throw ApiException.unauthorized("Login required");
-    return catalogue.getWonItems(username);
+        String username = currentUser.requireUsername(httpReq);
+        if (username == null) throw ApiException.unauthorized("Login required");
+        return catalogue.getWonItems(username);
+    }
 }
-}
+
+
 
