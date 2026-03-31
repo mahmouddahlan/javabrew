@@ -1,0 +1,4 @@
+Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Max,Error %,Throughput,Received KB/sec,Sent KB/sec
+GET items,10,6,6,9,9,12,5,12,0.000%,1.11062,0.29,0.17
+POST login,10,128,122,136,136,169,113,169,0.000%,1.09589,0.37,0.26
+TOTAL,20,67,12,134,136,169,5,169,0.000%,2.18866,0.65,0.42
