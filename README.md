@@ -193,7 +193,7 @@ This project was tested using Apache JMeter to evaluate performance under concur
 
 #### `/api/items` (Read Operation)
 
-| Users | Avg (ms) | Median | 90% | 95% |
+| Users | Avg (ms) | Median (ms) | 90% Line (ms) | 95% Line (ms) |
 |------|---------|--------|-----|-----|
 | 10 | 6 | 6 | 9 | 9 |
 | 50 | 7 | 6 | 8 | 9 |
@@ -204,7 +204,7 @@ This project was tested using Apache JMeter to evaluate performance under concur
 
 #### `/api/auth/login` (Authentication)
 
-| Users | Avg (ms) | Median | 90% | 95% |
+| Users | Avg (ms) | Median (ms) | 90% Line (ms) | 95% Line (ms) |
 |------|---------|--------|-----|-----|
 | 10 | 128 | 122 | 136 | 136 |
 | 50 | 119 | 118 | 129 | 131 |
@@ -231,6 +231,7 @@ Normalized load using:
 - System handles up to **40% of baseline capacity without degradation**
 
 The system demonstrates strong performance and scalability under moderate concurrent load. Read-heavy operations perform efficiently, while authentication remains stable despite higher processing overhead.
+
 ---
 
 ## Deliverable 2 Notes
