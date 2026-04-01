@@ -55,124 +55,94 @@ docker-compose down
    * `JavaBrew - D2.postman_collection.json`
    * `JavaBrew Local.postman_environment.json`
 ---
-## **Step 2 – Set Environment**
-### Select the environment:
-JavaBrew Local
+1) Environment Setup
 
-Ensure:
-baseUrl \= http://localhost:8080/api  
----
+Use the JavaBrew Local environment.
 
-## Happy Path (End-to-End Flow)**
+Required variables:
 
-Run the following requests in order:
+baseUrl = http://localhost:8080/api
+token → seller token
+token2 → bidder token
+itemId → created item id
 
-1. 01 \- Health
-2. 02 \- Signup
-3. 03 \- Login
-4. 04 \- Create Item
-5. 05 \- Search Items
-6. 06 \- Place Bid
-7. 07 \- Get Auction State (After End)
-8. 08 \- Pay as Winner
-9. 09 \- Get Receipt
+Because authentication tokens are stored in memory, after every backend restart 
+you must rerun login requests to refresh tokens.
 
-This demonstrates:
+2) Happy Path
 
-* UC1 – Sign-up / Login
-* UC2 – Browse/Search Catalogue
-* UC3 – Valid Bidding (integer \+ strictly increasing)
-* UC4 – Auction End Behavior
-* UC5 – Payment Page Logic
-* UC6 – Receipt \+ Shipping Message
-* UC7 – Seller Upload Item
+Run in this exact order:
 
-All requests in the Happy Path return **200 or 201** depending on endpoint.
----
+01-health
+02-Signup
+03 - Login request
+04 - Create Item (UC7)
+05 - Search Items
+NEG 05a - Signup Bob
+NEG 05b - Login Bob
+06 - Place Bid
+07 - Get Auction State (end)
+08 - Pay as Winner
+09 - Get Receipt
+Expected outcomes
+Signup: 201 Created
+Login: 200 OK
+Create item: 201 Created
+Place bid: 200 OK
+Payment: 200 OK
+Receipt: 200 OK
+3) Negative Path
 
-## Negative Tests (Robustness)**
+Run after Happy Path setup exists.
 
-The following scenarios are implemented:
-* Duplicate username → 409 Conflict
-* Invalid login credentials → 401 Unauthorized
-* Bid ≤ current bid → 400 Bad Request
-* Bid after auction ended → 409 Conflict
-* Non-winner attempts payment → 403 Forbidden
-* Missing payment fields → 400 Bad Request
+Recommended order
+NEG 01 - Duplicate Username
+NEG 02 - Bad Login Credentials
+NEG 03 - Bid <= Current Bid
+NEG 04 - Bid After Auction End
+NEG 05 - Non-winner pays
+NEG 06 - Missing Payment Fields
+NEG 07 - Invalid Auction ID
+NEG 08 - Empty Request Body
+NEG 09 - Unauthorized Access
+Expected outcomes
+Duplicate username → 409 Conflict
+Bad login → 401 Unauthorized
+Low bid → 400 Bad Request
+Bid after auction end → 409 Conflict
+Non-winner payment → 403 Forbidden
+Missing payment fields → 400 Bad Request
+Invalid auction id → 404 Not Found
+Empty request → 400 Bad Request
+Receipt unauthorized access → currently left public (200 OK) for this milestone
+4) Security Tests
 
-Each negative test includes assertions validating the expected status code.
+Before running security tests, run this setup:
 
-### ***NEG 01 – Duplicate Username***
-***Purpose: Ensure the system prevents creating a user with an existing username.***
+03 - Login request
+04 - Create Item
+NEG 05b - Login Bob
+06 - Place Bid
 
-***Run Order:***
-1. ***`NEG 05a – Signup Bob`***
-2. ***`NEG 01 – Duplicate Username`***
+Then run security tests in this order:
 
-***Expected Result:***  
- ***`409 Conflict`*** 
----
-## ***NEG 02 – Bad Login Credentials***
-***Purpose: Ensure invalid login credentials are rejected.***
+SEC 01 - Place Bid No Token
+SEC 02 - Invalid Token
+SEC 03 - Access Another User
+Expected outcomes
+No token → 401 Unauthorized
+Invalid token → 401 Unauthorized
+Wrong authenticated user → 403 Forbidden
+5) Important Notes
+Token refresh rule
 
-***Run Order:***
-1. ***`NEG 02 – Bad Login Credentials`***
+After every backend restart:
 
-***Expected Result:***  
- ***`401 Unauthorized` or `403 Forbidden` (depending on backend implementation)***
----
-## ***NEG 03 – Bid \<= Current Bid***
-***Purpose: Ensure a bid must be strictly greater than the current highest bid.***
-***Required Setup: An item must exist and already have a valid bid.***
+rerun seller login
+rerun Bob login
+rerun create item
 
-***Run Order:***
-1. ***`SETUP 01 – Create Item`***
-2. ***`SETUP 02 – Place Valid Bid`***
-3. ***`NEG 03 – Bid <= Current Bid`***
-
-***Expected Result:***  
- ***`409 Conflict`*** 
----
-## ***NEG 04 – Bid After Auction Ended***
-***Purpose: Ensure bidding is blocked once an auction has ended.***
-***Required Setup: An item must exist, have at least one bid, and the auction must be ended.***
-
-***Run Order:***
-1. ***`SETUP 03 – Create Item (Ends in …)`***
-2. ***`SETUP 05-2 – Place bid as Alice`***
-3. ***`GET end`***
-4. ***`NEG 04 – Bid After Auction Ended`***
-
-***Expected Result:***  
- ***`409 Conflict`*** 
----
-## ***NEG 05 – Non-winner Pays***
-***Purpose: Ensure only the winning bidder can complete payment.***
-***Required Setup: An ended auction with a winner must exist. A different user attempts to pay.***
-
-***Run Order:***
-1. ***`NEG 05a – Signup Bob`***
-2. ***`NEG 05b – Login Bob`***
-3. ***`SETUP 05-1 – Create Item`***
-4. ***`SETUP 05-2 – Place bid as Alice`***
-5. ***`GET end`***
-6. ***`NEG 05 – Non-winner pays`***
-
-***Expected Result:***  
- ***`403 Forbidden` or `409 Conflict`***
----
-## ***NEG 06 – Missing Payment Fields***
-***Purpose: Ensure payment validation fails when required fields are missing.***
-***Required Setup: An ended auction where the winner attempts to pay.***
-
-***Run Order:***
-1. ***`SETUP 01 – Create Item`***
-2. ***`SETUP 02 – Place Valid Bid`***
-3. ***`GET end`***
-4. ***`NEG 06 – Missing Payment Fields`***
-
-***Expected Result:***  
- ***`400 Bad Request`***
+Otherwise stale tokens will cause authentication failures or null bidder username database errors.
 ---
 ## Performance Testing (JMeter)
 
