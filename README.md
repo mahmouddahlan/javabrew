@@ -240,7 +240,14 @@ cd /path/to/javabrew
 export OPENAI_API_KEY="YOUR_OPENAI_API_KEY_HERE"
 export OPENAI_MODEL="gpt-4.1-mini"
 ./mvnw spring-boot:run
+```
 
+If running with Docker, add the key to docker-compose.yml under the backend service:
+backend:
+  environment:
+    - OPENAI_API_KEY=your_key_here
+    - OPENAI_MODEL=gpt-4.1-mini
+    
 How to test: 
 Log in as admin:
 username: admin
