@@ -174,6 +174,64 @@ Each negative test includes assertions validating the expected status code.
 ***Expected Result:***  
  ***`400 Bad Request`***
 ---
+## Performance Testing (JMeter)
+
+This project was tested using Apache JMeter to evaluate performance under concurrent user load.
+
+### Test Setup
+- Server: `localhost:8080`
+- Tool: Apache JMeter  
+- Endpoints tested:
+  - `GET /api/items`
+  - `POST /api/auth/login`
+- Load levels: **10, 50, 100, 200 users**
+- Loop count: 1 (each user sends one request)
+
+---
+
+### Results
+
+#### `/api/items` (Read Operation)
+
+| Users | Avg (ms) | Median | 90% | 95% |
+|------|---------|--------|-----|-----|
+| 10 | 6 | 6 | 9 | 9 |
+| 50 | 7 | 6 | 8 | 9 |
+| 100 | 4 | 4 | 6 | 6 |
+| 200 | 4 | 4 | 5 | 5 |
+
+---
+
+#### `/api/auth/login` (Authentication)
+
+| Users | Avg (ms) | Median | 90% | 95% |
+|------|---------|--------|-----|-----|
+| 10 | 128 | 122 | 136 | 136 |
+| 50 | 119 | 118 | 129 | 131 |
+| 100 | 126 | 125 | 138 | 147 |
+| 200 | 123 | 123 | 131 | 137 |
+
+---
+
+### Load Normalization
+
+Normalized load using:
+
+| Users | Load |
+|------|------|
+| 10 | 0.02 |
+| 50 | 0.10 |
+| 100 | 0.20 |
+| 200 | 0.40 |
+
+
+- Read operations are **extremely fast (4–7 ms)** and scale well  
+- Authentication is slower (~120 ms) due to password hashing and database validation  
+- Performance remains **stable from 10 → 200 users**  
+- System handles up to **40% of baseline capacity without degradation**
+
+The system demonstrates strong performance and scalability under moderate concurrent load. Read-heavy operations perform efficiently, while authentication remains stable despite higher processing overhead.
+---
 
 ## Deliverable 2 Notes
 The following deliverables are included in this repository:
