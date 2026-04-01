@@ -143,6 +143,8 @@ rerun Bob login
 rerun create item
 
 Otherwise stale tokens will cause authentication failures or null bidder username database errors.
+
+Scalability Test: A repeated-load test was performed using Postman Collection Runner on the item search endpoint for 50 iterations. All requests returned 200 OK with stable response times and no server failures, demonstrating backend stability under repeated read traffic
 ---
 ## Performance Testing (JMeter)
 
