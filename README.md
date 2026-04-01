@@ -233,24 +233,8 @@ The admin dashboard includes an AI analytics assistant for business questions ab
 
 ### OpenAI setup
 1. Create your own OpenAI API key from the OpenAI platform https://platform.openai.com/api-keys
-2. Start the backend by setting your key in the terminal:
-
-```bash
-cd /path/to/javabrew
-export OPENAI_API_KEY="YOUR_OPENAI_API_KEY_HERE"
-export OPENAI_MODEL="gpt-4.1-mini"
-./mvnw spring-boot:run
-```
-
-If running with Docker, add the key to docker-compose.yml under the backend service:
-
-backend:
-
-  environment:
-  
-    -OPENAI_API_KEY=your_key_here
-    
-    -OPENAI_MODEL=gpt-4.1-mini
+2. Open docker-compose.yml and replace `your_openai_api_key_here` with your key
+3. Run docker-compose up --build
     
 How to test: 
 Log in as admin:
