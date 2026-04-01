@@ -80,3 +80,8 @@ export interface AdminStatsResponse {
   endedItems: number;
   removedNoBidItems: number;
 }
+
+export interface AdminAiChatResponse {
+  reply: string;
+  configured: boolean;
+}
