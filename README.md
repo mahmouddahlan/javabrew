@@ -225,3 +225,24 @@ The following deliverables are included in this repository:
 - Docker containerization
 - Postman D3 collection with admin security tests
 - docs/deliverable-3/
+
+- Admin AI analytics chat feature (A3 GenAI use case)
+
+## Admin AI Chat Setup
+The admin dashboard includes an AI analytics assistant for business questions about auction activity, bid trends, top auctions, and items with no bids.
+
+### OpenAI setup
+1. Create your own OpenAI API key from the OpenAI platform https://platform.openai.com/api-keys
+2. Open docker-compose.yml and replace `your_openai_api_key_here` with your key
+3. Run docker-compose up --build
+    
+How to test: 
+Log in as admin:
+username: admin
+password: admin123
+Open the admin page
+Try prompts such as:
+How many active auctions do we have?
+Show me items with no bids
+What are the top 5 auctions by current bid?
+Summarize recent bid activity
