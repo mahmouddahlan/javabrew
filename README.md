@@ -245,8 +245,8 @@ export OPENAI_MODEL="gpt-4.1-mini"
 If running with Docker, add the key to docker-compose.yml under the backend service:
 backend:
   environment:
-    - OPENAI_API_KEY=your_key_here
-    - OPENAI_MODEL=gpt-4.1-mini
+    -OPENAI_API_KEY=your_key_here
+    -OPENAI_MODEL=gpt-4.1-mini
     
 How to test: 
 Log in as admin:
