@@ -187,6 +187,8 @@ This project was tested using Apache JMeter to evaluate performance under concur
 - Load levels: **10, 50, 100, 200 users**
 - Loop count: 1 (each user sends one request)
 
+The JMX and data files can be found in `src/test/jmeter` containing `javabrew-jmeter.jmx`, `10-users-aggregate.csv`, `50-users-aggregate.csv`, `100-users-aggregate.csv` and `200-users-aggregate.csv`.
+
 ---
 
 ### Results
@@ -251,18 +253,3 @@ The following deliverables are included in this repository:
 - Docker containerization
 - Postman D3 collection with admin security tests
 - docs/deliverable-3/
-
-# Admin AI Chat Setup
-
-This project includes an admin-only GenAI use case: a business analytics chat assistant for the auction platform.
-
-## What it does
-- Lets an admin ask natural-language questions about marketplace activity
-- Uses fixed backend tools for auction stats, top bids, inactive listings, and bid activity
-- Keeps the OpenAI API key on the backend only
-
-## Safe local setup
-```bash
-export OPENAI_API_KEY=your_key_here
-export OPENAI_MODEL=gpt-4.1-mini
-./mvnw spring-boot:run
