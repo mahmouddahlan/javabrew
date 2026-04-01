@@ -215,7 +215,7 @@ This project was tested using Apache JMeter to evaluate performance under concur
 
 ### Load Normalization
 
-Normalized load using:
+Normalized load using: v / v_0 (v_0 = 500)
 
 | Users | Load |
 |------|------|
