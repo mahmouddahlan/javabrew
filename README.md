@@ -187,7 +187,8 @@ This project was tested using Apache JMeter to evaluate performance under concur
 - Load levels: **10, 50, 100, 200 users**
 - Loop count: 1 (each user sends one request)
 
-The JMX and data files can be found in `src/test/jmeter` containing `javabrew-jmeter.jmx`, `10-users-aggregate.csv`, `50-users-aggregate.csv`, `100-users-aggregate.csv`, `200-users-aggregate.csv`.
+The JMX and data files can be found in `src/test/jmeter` containing `javabrew-jmeter.jmx`, `10-users-aggregate.csv`, `50-users-aggregate.csv`, `100-users-aggregate.csv` and `200-users-aggregate.csv`.
+
 ---
 
 ### Results
